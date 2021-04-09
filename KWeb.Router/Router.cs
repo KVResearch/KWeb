@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-
 using KWeb.Server;
 
 namespace KWeb.Router
@@ -13,23 +12,35 @@ namespace KWeb.Router
             _routemap = new ConcurrentDictionary<string, IRouteEndPoint>();
         }
 
-        public RouteResult Route(HttpRequest request)
+        public RouteResult Route(HttpRequest request, bool autoFallback = true)
         {
-            string host = request.Host;
+            string host = request.Host.ToLower();
             if (_routemap.ContainsKey(host))
             {
-                _routemap[host].Process(request);
-                return RouteResult.Success;
+                return new RouteResult
+                {
+                    Status = RouteResultType.Success,
+                    Result = _routemap[host].Process(request)
+                };
             }
 
-            if (!_routemap.ContainsKey("default")) return RouteResult.Failed;
-            _routemap["default"].Process(request);
-            return RouteResult.Fallback;
+            if (autoFallback && _routemap.ContainsKey("default"))
+                return new RouteResult
+                {
+                    Status = RouteResultType.Fallback,
+                    Result = _routemap["default"].Process(request)
+                };
+
+            return new RouteResult
+            {
+                Status = RouteResultType.Failed,
+                Result = null
+            };
         }
 
         public Router AddOrUpdateRoute(string host, IRouteEndPoint endpoint)
         {
-            _routemap.AddOrUpdate(host, endpoint, (_, _) => endpoint);
+            _routemap.AddOrUpdate(host.ToLower(), endpoint, (x, y) => endpoint);
             return this;
         }
 
