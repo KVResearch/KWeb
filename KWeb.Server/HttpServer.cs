@@ -60,19 +60,20 @@ namespace KWeb.Server
         private void InitialiseInstance()
         {
             m_Listener = new TcpListener(_ip, _port);
-            m_ListenerThread = new Thread(MainProcess)
-            {
-                IsBackground = true,
-                Name = "HttpServer"
-            };
         }
 
-        public bool IsRunning => m_ListenerThread.IsAlive;
+        public bool IsRunning => m_ListenerThread is null ? false : m_ListenerThread.IsAlive;
 
         public void Start()
         {
             Abort();
 
+            m_ListenerThread = new Thread(MainProcess)
+            {
+                IsBackground = true,
+                Name = Info.ServerName
+            };
+            
             m_ListenerThread.Start();
         }
 
