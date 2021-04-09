@@ -37,7 +37,7 @@ namespace KWeb.Server
 
         private static string ParseUri(string uri, out Dictionary<string, string> par)
         {
-            var sp = uri.Split(new[] {'?'}, 2);
+            var sp = uri.Split(new[] { '?' }, 2);
             if (sp.Length == 1)
             {
                 par = null;
@@ -58,21 +58,14 @@ namespace KWeb.Server
         }
 
         private static string Parse(Stream stream, ParsingState st)
+        => st switch
         {
-            switch (st)
-            {
-                case ParsingState.Method:
-                    return ParseMethod(stream);
-                case ParsingState.Uri:
-                    return ParseUri(stream);
-                case ParsingState.HeaderKey:
-                    return ParseHeaderKey(stream);
-                case ParsingState.HeaderValue:
-                    return ParseHeaderValue(stream);
-                default:
-                    throw new ApplicationException();
-            }
-        }
+            ParsingState.Method => ParseMethod(stream),
+            ParsingState.Uri => ParseUri(stream),
+            ParsingState.HeaderKey => ParseHeaderKey(stream),
+            ParsingState.HeaderValue => ParseHeaderValue(stream),
+            _ => throw new ApplicationException(),
+        };
 
         private static string ParseHeaderValue(Stream stream)
         {
@@ -94,7 +87,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char) ch);
+                sb.Append((char)ch);
             }
 
             return sb.ToString();
@@ -121,7 +114,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char) ch);
+                sb.Append((char)ch);
             }
 
             return sb.ToString();
@@ -144,7 +137,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char) ch);
+                sb.Append((char)ch);
             }
 
             if (sb.ToString(sb.Length - 8, 8) != "HTTP/1.1")
@@ -163,7 +156,7 @@ namespace KWeb.Server
                     throw new HttpException(400);
                 if (ch == ' ')
                     break;
-                sb.Append((char) ch);
+                sb.Append((char)ch);
             }
 
             switch (sb.ToString())
