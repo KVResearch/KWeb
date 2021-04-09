@@ -2,13 +2,15 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
+
+// ReSharper disable FunctionNeverReturns
 
 namespace KWeb.Server
 {
     // ReSharper disable once UnusedMember.Global
     public class HttpServer
     {
-        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private IPAddress _ip;
         private int _port;
         private Thread m_ListenerThread;
@@ -39,7 +41,6 @@ namespace KWeb.Server
 
         public delegate HttpResponse OnHttpRequestEventHandler(HttpRequest request);
 
-        // ReSharper disable once EventNeverSubscribedTo.Global
         public event OnHttpRequestEventHandler OnHttpRequest;
 
         public HttpServer(IPAddress ip, int port)
@@ -68,7 +69,6 @@ namespace KWeb.Server
 
         public bool IsRunning => m_ListenerThread.IsAlive;
 
-        // ReSharper disable once UnusedMember.Global
         public void Start()
         {
             Abort();
@@ -96,11 +96,8 @@ namespace KWeb.Server
             while (true)
             {
                 var tcp = m_Listener.AcceptTcpClient();
-                var thr = new Thread(o => Process((TcpClient) o));
-                thr.Start(tcp);
+                Task.Run(() => Process(tcp));
             }
-
-            // ReSharper disable once FunctionNeverReturns
         }
 
         private void Process(TcpClient tcp)
