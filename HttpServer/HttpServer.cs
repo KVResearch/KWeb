@@ -115,6 +115,8 @@ namespace KWeb.Server
                         var request = RequestParser.Parse(stream);
                         if (OnHttpRequest == null)
                             throw new HttpException(501);
+                        // TODO: process to E.P. is nonsense
+                        request.RemoteAddress = tcp.Client.RemoteEndPoint;
                         response = OnHttpRequest(request);
                     }
                     catch (HttpException e)
