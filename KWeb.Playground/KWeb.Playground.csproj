@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HttpServer\KWeb.Server.csproj" />
+    <ProjectReference Include="..\KWeb.Server\KWeb.Server.csproj" />
   </ItemGroup>
 
 </Project>
