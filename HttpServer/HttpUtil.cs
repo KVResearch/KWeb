@@ -37,16 +37,15 @@ namespace KWeb.Server
         {
             stream.Position = 0;
             return new HttpResponse
-                       {
-                           ResponseCode = 200,
-                           Header =
-                               new Dictionary<string, string>
-                                   {
-                                       { "Content-Type", contentType },
-                                       { "Content-Length", stream.Length.ToString(CultureInfo.InvariantCulture) }
-                                   },
-                           ResponseStream = stream
-                       };
+            {
+                ResponseCode = 200,
+                Header = new Dictionary<string, string>
+                {
+                    {"Content-Type", contentType},
+                    {"Content-Length", stream.Length.ToString(CultureInfo.InvariantCulture)}
+                },
+                ResponseStream = stream
+            };
         }
     }
 }

@@ -15,14 +15,14 @@ namespace KWeb.Server
             Dictionary<string, string> par;
             var baseUri = ParseUri(uri, out par);
             var request = new HttpRequest
-                              {
-                                  Method = method,
-                                  Uri = uri,
-                                  BaseUri = baseUri,
-                                  Parameters = par,
-                                  Header = new Dictionary<string, string>(),
-                                  RequestStream = stream
-                              };
+            {
+                Method = method,
+                Uri = uri,
+                BaseUri = baseUri,
+                Parameters = par,
+                Header = new Dictionary<string, string>(),
+                RequestStream = stream
+            };
             while (true)
             {
                 var key = Parse(stream, ParsingState.HeaderKey);
@@ -31,12 +31,13 @@ namespace KWeb.Server
                 var value = Parse(stream, ParsingState.HeaderValue);
                 request.Header.Add(key, value);
             }
+
             return request;
         }
 
         private static string ParseUri(string uri, out Dictionary<string, string> par)
         {
-            var sp = uri.Split(new[] { '?' }, 2);
+            var sp = uri.Split(new[] {'?'}, 2);
             if (sp.Length == 1)
             {
                 par = null;
@@ -92,8 +93,10 @@ namespace KWeb.Server
                         throw new HttpException(400);
                     break;
                 }
-                sb.Append((char)ch);
+
+                sb.Append((char) ch);
             }
+
             return sb.ToString();
         }
 
@@ -117,8 +120,10 @@ namespace KWeb.Server
                         throw new HttpException(400);
                     break;
                 }
-                sb.Append((char)ch);
+
+                sb.Append((char) ch);
             }
+
             return sb.ToString();
         }
 
@@ -138,8 +143,10 @@ namespace KWeb.Server
                         throw new HttpException(400);
                     break;
                 }
-                sb.Append((char)ch);
+
+                sb.Append((char) ch);
             }
+
             if (sb.ToString(sb.Length - 8, 8) != "HTTP/1.1")
                 throw new HttpException(505);
             return sb.ToString(0, sb.Length - 9);
@@ -156,8 +163,9 @@ namespace KWeb.Server
                     throw new HttpException(400);
                 if (ch == ' ')
                     break;
-                sb.Append((char)ch);
+                sb.Append((char) ch);
             }
+
             switch (sb.ToString())
             {
                 case "OPTIONS":

@@ -6,6 +6,9 @@ namespace KWeb.Server
     {
         public int ResponseCode { get; }
 
-        public HttpException(int code) { ResponseCode = code; }
+        public HttpException(int code)
+        {
+            ResponseCode = code;
+        }
     }
 }

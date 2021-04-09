@@ -21,10 +21,10 @@ namespace KWeb.Server
         {
             m_Listener = new TcpListener(ip, port);
             m_ListenerThread = new Thread(MainProcess)
-                                   {
-                                       IsBackground = true,
-                                       Name = "HttpServer"
-                                   };
+            {
+                IsBackground = true,
+                Name = "HttpServer"
+            };
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -36,9 +36,10 @@ namespace KWeb.Server
             while (true)
             {
                 var tcp = m_Listener.AcceptTcpClient();
-                var thr = new Thread(o => Process((TcpClient)o));
+                var thr = new Thread(o => Process((TcpClient) o));
                 thr.Start(tcp);
             }
+
             // ReSharper disable once FunctionNeverReturns
         }
 
@@ -58,7 +59,7 @@ namespace KWeb.Server
                     }
                     catch (HttpException e)
                     {
-                        response = new HttpResponse { ResponseCode = e.ResponseCode };
+                        response = new HttpResponse {ResponseCode = e.ResponseCode};
                     }
                     catch (Exception e)
                     {
@@ -71,9 +72,10 @@ namespace KWeb.Server
 
                     stream.Close();
                 }
+
                 tcp.Close();
             }
-            catch (Exception)
+            catch
             {
                 // ignored
             }

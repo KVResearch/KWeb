@@ -5,7 +5,7 @@ namespace KWeb.Server
 {
     internal static class StreamHelper
     {
-        private static readonly byte[] CrLf = { (byte)'\r', (byte)'\n' };
+        private static readonly byte[] CrLf = {(byte) '\r', (byte) '\n'};
 
         internal static void Write(this Stream stream, string str, Encoding encoding = null)
         {

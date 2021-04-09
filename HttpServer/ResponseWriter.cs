@@ -58,8 +58,8 @@ namespace KWeb.Server
             while (rest > 0)
             {
                 var sz = rest < 4096
-                             ? response.ResponseStream.Read(buff, 0, (int)rest)
-                             : response.ResponseStream.Read(buff, 0, 4096);
+                    ? response.ResponseStream.Read(buff, 0, (int) rest)
+                    : response.ResponseStream.Read(buff, 0, 4096);
                 stream.Write(buff, 0, sz);
                 rest -= sz;
             }
