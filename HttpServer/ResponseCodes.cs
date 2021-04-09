@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace KWeb.Server
 {
-    internal static class ResponseCodes
+    public static class ResponseCodes
     {
-        private static readonly Dictionary<int, string> Codes
+        public static readonly Dictionary<int, string> Codes
             = new Dictionary<int, string>
             {
                 {100, "Continue"},

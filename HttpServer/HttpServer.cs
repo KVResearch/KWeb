@@ -121,7 +121,7 @@ namespace KWeb.Server
                     }
                     catch (HttpException e)
                     {
-                        response = new HttpResponse {ResponseCode = e.ResponseCode};
+                        response = HttpException.GetExpResponse(e.ResponseCode);
                     }
                     catch (Exception e)
                     {

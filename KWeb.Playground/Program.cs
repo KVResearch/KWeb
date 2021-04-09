@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 using KWeb.Server;
 
 namespace KWeb.Playground
@@ -20,13 +18,15 @@ namespace KWeb.Playground
 
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
+            if (request.Uri.EndsWith("404"))
+                return HttpException.GetExpResponse(404);
             return HttpUtil.GenerateHttpResponse(
                 "<h1>Hello from KWeb.Server</h1>\n" +
                 "<p>Method => " + request.Method + "</p>\n" +
                 "<p>Uri    => " + request.Uri + "</p>\n" +
-                "<p>IP     => " + ((IPEndPoint)request.RemoteAddress).Address + "</p>\n" +
+                "<p>IP     => " + ((IPEndPoint) request.RemoteAddress).Address + "</p>\n" +
                 "<p>Data   => " + request.ReadToEnd() + "</p>"
-            , 200, "html");
+                , 200, "text/html");
         }
     }
 }
