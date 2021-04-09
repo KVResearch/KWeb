@@ -20,9 +20,9 @@ namespace KWeb.Playground
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
             return HttpUtil.GenerateHttpResponse(
-                "Mthod => " + request.Method + "\n" +
-                "Uri   => " + request.Uri + "\n" +
-                "Data  => " + request.ReadToEnd()
+                "Method => " + request.Method + "\n" +
+                "Uri    => " + request.Uri + "\n" +
+                "Data   => " + request.ReadToEnd()
             );
         }
     }
