@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-
 using KWeb.Server;
 
 namespace KWeb.Playground
@@ -16,30 +15,15 @@ namespace KWeb.Playground
             {
                 // Keep Server Working
             }
-
         }
 
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
-            return new HttpResponse()
-            {
-                ResponseCode = 200,
-                ResponseStream = GenerateStreamFromString(
-                    "Mthod => " + request.Method + "\n" +
-                    "Uri   => " + request.Uri + "\n" +
-                    "Data  => " + request.ReadToEnd()
-                    )
-            };
-        }
-
-        public static Stream GenerateStreamFromString(string s)
-        {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(s);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
+            return HttpUtil.GenerateHttpResponse(
+                "Mthod => " + request.Method + "\n" +
+                "Uri   => " + request.Uri + "\n" +
+                "Data  => " + request.ReadToEnd()
+            );
         }
     }
 }

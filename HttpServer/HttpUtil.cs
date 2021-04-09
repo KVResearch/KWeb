@@ -24,21 +24,21 @@ namespace KWeb.Server
             return Encoding.UTF8.GetString(buff);
         }
 
-        public static HttpResponse GenerateHttpResponse(string str, string contentType = "text/json")
+        public static HttpResponse GenerateHttpResponse(string str, int httpCode = 200, string contentType = "text/json")
         {
             var stream = new MemoryStream();
             var sw = new StreamWriter(stream);
             sw.Write(str);
             sw.Flush();
-            return GenerateHttpResponse(stream, contentType);
+            return GenerateHttpResponse(stream, httpCode, contentType);
         }
 
-        public static HttpResponse GenerateHttpResponse(Stream stream, string contentType = "text/json")
+        public static HttpResponse GenerateHttpResponse(Stream stream, int httpCode = 200, string contentType = "text/json")
         {
             stream.Position = 0;
             return new HttpResponse
             {
-                ResponseCode = 200,
+                ResponseCode = httpCode,
                 Header = new Dictionary<string, string>
                 {
                     {"Content-Type", contentType},

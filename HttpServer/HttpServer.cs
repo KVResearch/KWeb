@@ -123,7 +123,7 @@ namespace KWeb.Server
                     }
                     catch (Exception e)
                     {
-                        response = HttpUtil.GenerateHttpResponse(e.ToString(), "text/plain");
+                        response = HttpUtil.GenerateHttpResponse(e.ToString(), 200, "text/plain");
                         response.ResponseCode = 500;
                     }
 
