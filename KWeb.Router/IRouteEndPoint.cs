@@ -4,6 +4,6 @@ namespace KWeb.Router
 {
     public interface IRouteEndPoint
     {
-        public string Process(HttpRequest request);
+        public void Process(HttpRequest request);
     }
 }
