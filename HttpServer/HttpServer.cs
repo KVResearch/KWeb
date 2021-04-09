@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CSharpUtil
+namespace KWeb.Server
 {
     // ReSharper disable once UnusedMember.Global
     public class HttpServer

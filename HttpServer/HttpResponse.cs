@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace CSharpUtil
+namespace KWeb.Server
 {
     public class HttpResponse : IDisposable
     {

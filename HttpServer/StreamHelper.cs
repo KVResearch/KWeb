@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace CSharpUtil
+namespace KWeb.Server
 {
     internal static class StreamHelper
     {

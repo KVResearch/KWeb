@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CSharpUtil
+namespace KWeb.Server
 {
     internal static class ResponseCodes
     {

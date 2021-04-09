@@ -1,6 +1,6 @@
 using System;
 
-namespace CSharpUtil
+namespace KWeb.Server
 {
     public class HttpException : Exception
     {
