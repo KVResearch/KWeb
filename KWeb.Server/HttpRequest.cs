@@ -10,6 +10,7 @@ namespace KWeb.Server
         public string Uri { get; set; }
         public EndPoint RemoteAddress { get; set; }
         public Dictionary<string, string> Header { get; set; }
+        public string Host => Header?["Host"];
         public Stream RequestStream { get; set; }
     }
 }

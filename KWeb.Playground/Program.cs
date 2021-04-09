@@ -23,6 +23,7 @@ namespace KWeb.Playground
             return HttpUtil.GenerateHttpResponse(
                 "<h1>Hello from KWeb.Server</h1>\n" +
                 "<p>Method => " + request.Method + "</p>\n" +
+                "<p>Host   => " + request.Host + "</p>\n" +
                 "<p>Uri    => " + request.Uri + "</p>\n" +
                 "<p>IP     => " + ((IPEndPoint) request.RemoteAddress).Address + "</p>\n" +
                 "<p>Data   => " + request.ReadToEnd() + "</p>"
