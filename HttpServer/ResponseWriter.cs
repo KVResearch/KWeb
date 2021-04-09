@@ -19,6 +19,9 @@ namespace KWeb.Server
             if (response.Header == null)
                 response.Header = new Dictionary<string, string>();
 
+            if (!response.Header.ContainsKey("server"))
+                response.Header.Add("server", Info.ServerName);
+
             response.Header["Connection"] = "close";
 
             if (response.ResponseStream != null &&
