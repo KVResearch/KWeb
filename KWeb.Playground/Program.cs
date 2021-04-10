@@ -9,14 +9,14 @@ namespace KWeb.Playground
 {
     class Program
     {
-        private static Router.Router router;
+        private static Router.Router _router;
 
         static void Main(string[] args)
         {
             HttpServer hs = new HttpServer("127.0.0.1", 80);
             hs.OnHttpRequest += Hs_OnHttpRequest;
-            router = new Router.Router();
-            router.AddOrUpdateRoute("default", new BasicRoutedEndPoint())
+            _router = new Router.Router();
+            _router.AddOrUpdateRoute("default", new BasicRoutedEndPoint())
                 .AddOrUpdateRoute("kevintest.com", new HelloRoutedEndPoint());
 
             hs.Start();
@@ -28,7 +28,7 @@ namespace KWeb.Playground
 
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
-            var r = router.Route(request, false);
+            var r = _router.Route(request, false);
             Console.WriteLine(request.Host + " => " + r.Result);
             if (r.Result != null)
                 return r.Result;
