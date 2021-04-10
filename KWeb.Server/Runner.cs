@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace KWeb.Server
 {
@@ -54,23 +55,23 @@ namespace KWeb.Server
             return this;
         }
 
-        public Runner Add(int port, HttpServer.OnHttpRequestEventHandler evt)
+        public Runner Add(int port, HttpServer.OnHttpRequestEventHandler evt, X509Certificate cert = null)
         {
-            var hs = new HttpServer(_ip, port);
+            var hs = new HttpServer(_ip, port, cert);
             hs.OnHttpRequest += evt;
             _dic.Add(port, hs);
             return this;
         }
-        
-        public Runner Add(int port)
+
+        public Runner Add(int port, X509Certificate cert = null)
         {
-            _dic.Add(port, new HttpServer(_ip, port));
+            _dic.Add(port, new HttpServer(_ip, port, cert));
             return this;
         }
 
-        public Runner Add(int port, Func<HttpRequest, HttpResponse> evt)
+        public Runner Add(int port, Func<HttpRequest, HttpResponse> evt, X509Certificate cert = null)
         {
-            var hs = new HttpServer(_ip, port);
+            var hs = new HttpServer(_ip, port, cert);
             hs.OnHttpRequest += evt.Invoke;
             _dic.Add(port, hs);
             return this;
