@@ -28,8 +28,10 @@ namespace KWeb.Playground
 
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
-            var r = _router.Route(request, false);
-            Console.WriteLine(request.Host + " => " + r.Result);
+            if (request.Uri.EndsWith("ggl"))
+                return HttpUtil.GenerateHttpDirectResponse("https://google.com", 301);
+            var r = _router.Route(request, true);
+            Console.WriteLine(request.Host + " => " + r.Status);
             if (r.Status != RouteResultType.Failed)
                 return r.Result;
             return HttpUtil.GenerateHttpResponse(

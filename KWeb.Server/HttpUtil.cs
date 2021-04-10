@@ -47,5 +47,18 @@ namespace KWeb.Server
                 ResponseStream = stream
             };
         }
+        
+        public static HttpResponse GenerateHttpDirectResponse(string url, int httpCode = 301, string contentType = "text/json")
+        {
+            return new HttpResponse
+            {
+                ResponseCode = httpCode,
+                Header = new Dictionary<string, string>
+                {
+                    {"Content-Type", contentType},
+                    {"Location", url}
+                }
+            };
+        }
     }
 }
