@@ -8,12 +8,6 @@ namespace KWeb.Server
     {
         public static void Write(Stream stream, HttpResponse response)
         {
-            if (stream is null)
-                stream = new MemoryStream();
-
-            if (response is null)
-                response = new HttpResponse();
-
             stream.WriteLine($"HTTP/1.1 {response.ResponseCode} {ResponseCodes.Get(response.ResponseCode)}");
 
             if (response.Header == null)

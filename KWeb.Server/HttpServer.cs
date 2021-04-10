@@ -105,40 +105,41 @@ namespace KWeb.Server
         {
             try
             {
-                using (var stream = tcp.GetStream())
+                using var stream = tcp.GetStream();
+
+                HttpResponse response;
+                try
                 {
-                    HttpResponse response;
-                    try
-                    {
-                        var request = RequestParser.Parse(stream);
-                        if (OnHttpRequest == null)
-                            throw new HttpException(501);
-                        // TODO: process to E.P. is nonsense
-                        request.RemoteAddress = tcp.Client.RemoteEndPoint;
-                        response = OnHttpRequest(request);
-                    }
-                    catch (HttpException e)
-                    {
-                        response = HttpException.GetExpResponse(e.ResponseCode);
-                    }
-                    catch (Exception e)
-                    {
-                        response = HttpUtil.GenerateHttpResponse(e.ToString(), 500, "text/plain");
-                    }
-
-                    using (response)
-                        ResponseWriter.Write(stream, response);
-
-                    stream.Close();
-                    stream.Dispose();
+                    var request = RequestParser.Parse(stream);
+                    if (OnHttpRequest == null)
+                        throw new HttpException(501);
+                    // TODO: process to E.P. is nonsense
+                    request.RemoteAddress = tcp.Client.RemoteEndPoint;
+                    response = OnHttpRequest(request);
+                }
+                catch (HttpException e)
+                {
+                    response = HttpException.GetExpResponse(e.ResponseCode);
+                }
+                catch (Exception e)
+                {
+                    response = HttpUtil.GenerateHttpResponse(e.ToString(), 500, "text/plain");
                 }
 
-                tcp.Close();
-                tcp.Dispose();
+                using (response)
+                    ResponseWriter.Write(stream, response);
+
+                stream.Close();
+                stream.Dispose();
             }
             catch
             {
                 // ignored
+            }
+            finally
+            {
+                tcp.Close();
+                tcp.Dispose();
             }
         }
     }
