@@ -73,7 +73,7 @@ namespace KWeb.Server
                 IsBackground = true,
                 Name = Info.ServerName
             };
-            
+
             m_ListenerThread.Start();
         }
 
@@ -130,9 +130,11 @@ namespace KWeb.Server
                         ResponseWriter.Write(stream, response);
 
                     stream.Close();
+                    stream.Dispose();
                 }
 
                 tcp.Close();
+                tcp.Dispose();
             }
             catch
             {

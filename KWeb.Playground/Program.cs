@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+
 using KWeb.Router;
 using KWeb.Server;
 
@@ -48,7 +51,7 @@ namespace KWeb.Playground
                 "<p>Method => " + request.Method + "</p>\n" +
                 "<p>Host   => " + request.Host + "</p>\n" +
                 "<p>Uri    => " + request.Uri + "</p>\n" +
-                "<p>IP     => " + ((IPEndPoint) request.RemoteAddress).Address + "</p>\n" +
+                "<p>IP     => " + ((IPEndPoint)request.RemoteAddress).Address + "</p>\n" +
                 "<p>Data   => " + request.ReadToEnd() + "</p>"
                 , 200, "text/html");
         }
