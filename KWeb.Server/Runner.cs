@@ -71,7 +71,7 @@ namespace KWeb.Server
         public Runner Add(int port, Func<HttpRequest, HttpResponse> evt)
         {
             var hs = new HttpServer(_ip, port);
-            hs.OnHttpRequest += (req) => evt.Invoke(req);
+            hs.OnHttpRequest += evt.Invoke;
             _dic.Add(port, hs);
             return this;
         }

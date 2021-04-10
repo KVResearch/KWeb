@@ -34,7 +34,8 @@ namespace KWeb.Router
             return new RouteResult
             {
                 Status = RouteResultType.Failed,
-                Result = null
+                Result = HttpUtil.GenerateHttpResponse(
+                    "Unknown Route", 503)
             };
         }
 

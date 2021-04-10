@@ -30,10 +30,8 @@ namespace KWeb.Playground
         {
             var r = _router.Route(request, false);
             Console.WriteLine(request.Host + " => " + r.Result);
-            if (r.Result != null)
+            if (r.Status != RouteResultType.Failed)
                 return r.Result;
-            if (request.Uri.EndsWith("404"))
-                return HttpException.GetExpResponse(404);
             return HttpUtil.GenerateHttpResponse(
                 "Unknown Route", 503);
         }

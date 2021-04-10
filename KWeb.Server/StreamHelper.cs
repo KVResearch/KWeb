@@ -9,7 +9,7 @@ namespace KWeb.Server
 
         internal static void Write(this Stream stream, string str, Encoding encoding = null)
         {
-            encoding = encoding ?? Encoding.UTF8;
+            encoding ??= Encoding.UTF8;
             var data = encoding.GetBytes(str);
             stream.Write(data, 0, data.Length);
         }
