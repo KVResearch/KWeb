@@ -1,6 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -101,12 +105,48 @@ namespace KWeb.Server
             }
         }
 
+        public bool IsSsl => _cert is null;
+
+        private X509Certificate _cert;
+
+        public HttpServer SetSsl(string certificate)
+            => SetSsl(X509Certificate.CreateFromCertFile(certificate));
+
+        public HttpServer SetSsl(X509Certificate certifiate)
+        {
+            _cert = certifiate;
+            return this;
+        }
+
+
+        private Stream ProcessSsl(Stream clientStream)
+        {
+            try
+            {
+                SslStream sslStream = new SslStream(clientStream);
+                sslStream.AuthenticateAsServer(_cert,
+                    false,
+                    SslProtocols.Tls13 | SslProtocols.Tls12 , true);
+                sslStream.ReadTimeout = 10000;
+                sslStream.WriteTimeout = 10000;
+                return sslStream;
+            }
+            catch (Exception e)
+            {
+                clientStream.Close();
+                throw new HttpException(500);
+            }
+
+            return null;
+        }
+
         private void Process(TcpClient tcp)
         {
             try
             {
-                using var stream = tcp.GetStream();
-
+                Stream stream = tcp.GetStream();
+                if (IsSsl)
+                    stream = ProcessSsl(stream);
                 HttpResponse response;
                 try
                 {
@@ -127,8 +167,15 @@ namespace KWeb.Server
                     response = HttpUtil.GenerateHttpResponse(e.ToString(), 500, "text/plain");
                 }
 
-                using (response)
-                    ResponseWriter.Write(stream, response);
+                try
+                {
+                    using (response)
+                        ResponseWriter.Write(stream, response);
+                }
+                catch
+                {
+                    // ignored
+                }
 
                 stream.Close();
                 stream.Dispose();
