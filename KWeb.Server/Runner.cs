@@ -86,5 +86,8 @@ namespace KWeb.Server
 
         public IEnumerator GetEnumerator()
             => _dic.GetEnumerator();
+
+        public HttpServer this[int port]
+            => _dic[port];
     }
 }
