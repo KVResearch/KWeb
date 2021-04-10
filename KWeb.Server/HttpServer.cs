@@ -47,17 +47,19 @@ namespace KWeb.Server
 
         public event OnHttpRequestEventHandler OnHttpRequest;
 
-        public HttpServer(IPAddress ip, int port)
+        public HttpServer(IPAddress ip, int port, X509Certificate cert = null)
         {
             _ip = ip;
             _port = port;
+            _cert = cert;
             InitialiseInstance();
         }
 
-        public HttpServer(string ip, int port)
+        public HttpServer(string ip, int port, X509Certificate cert = null)
         {
             _ip = IPAddress.Parse(ip);
             _port = port;
+            _cert = cert;
             InitialiseInstance();
         }
 
@@ -118,6 +120,12 @@ namespace KWeb.Server
             return this;
         }
 
+        public HttpServer DisableSsl()
+        {
+            _cert = null;
+            return this;
+        }
+
 
         private Stream ProcessSsl(Stream clientStream)
         {
@@ -126,7 +134,7 @@ namespace KWeb.Server
                 SslStream sslStream = new SslStream(clientStream);
                 sslStream.AuthenticateAsServer(_cert,
                     false,
-                    SslProtocols.Tls13 | SslProtocols.Tls12 , true);
+                    SslProtocols.Tls13 | SslProtocols.Tls12, true);
                 sslStream.ReadTimeout = 10000;
                 sslStream.WriteTimeout = 10000;
                 return sslStream;
