@@ -81,7 +81,7 @@ namespace KWeb.Server
         {
             try
             {
-                m_ListenerThread.Abort();
+                m_ListenerThread?.Abort();
             }
             catch
             {
