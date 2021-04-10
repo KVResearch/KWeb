@@ -20,5 +20,10 @@ namespace KWeb.Server
             RequestStream?.Close();
             RequestStream?.Dispose();
         }
+
+        public void DisposeHeader()
+        {
+            Header = null;
+        }
     }
 }

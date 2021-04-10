@@ -116,6 +116,7 @@ namespace KWeb.Server
                     // TODO: process to E.P. is nonsense
                     request.RemoteAddress = tcp.Client.RemoteEndPoint;
                     response = OnHttpRequest(request);
+                    request.DisposeHeader();
                 }
                 catch (HttpException e)
                 {
