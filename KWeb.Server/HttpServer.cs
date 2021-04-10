@@ -129,23 +129,14 @@ namespace KWeb.Server
 
         private Stream ProcessSsl(Stream clientStream)
         {
-            try
-            {
-                SslStream sslStream = new SslStream(clientStream);
-                sslStream.AuthenticateAsServer(_cert,
-                    false,
-                    SslProtocols.Tls13 | SslProtocols.Tls12, true);
-                sslStream.ReadTimeout = 10000;
-                sslStream.WriteTimeout = 10000;
-                return sslStream;
-            }
-            catch (Exception e)
-            {
-                clientStream.Close();
-                throw new HttpException(500);
-            }
-
-            return null;
+            // No need to catch exp, will catch in method Process
+            SslStream sslStream = new SslStream(clientStream);
+            sslStream.AuthenticateAsServer(_cert,
+                false,
+                SslProtocols.Tls13 | SslProtocols.Tls12, true);
+            sslStream.ReadTimeout = 10000;
+            sslStream.WriteTimeout = 10000;
+            return sslStream;
         }
 
         private void Process(TcpClient tcp)
