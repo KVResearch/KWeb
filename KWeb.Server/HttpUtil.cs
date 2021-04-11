@@ -24,7 +24,8 @@ namespace KWeb.Server
             return Encoding.UTF8.GetString(buff);
         }
 
-        public static HttpResponse GenerateHttpResponse(string str, int httpCode = 200, string contentType = "text/json")
+        public static HttpResponse GenerateHttpResponse(string str, int httpCode = 200,
+            string contentType = "text/json")
         {
             var stream = new MemoryStream();
             var sw = new StreamWriter(stream);
@@ -33,7 +34,8 @@ namespace KWeb.Server
             return GenerateHttpResponse(stream, httpCode, contentType);
         }
 
-        public static HttpResponse GenerateHttpResponse(Stream stream, int httpCode = 200, string contentType = "text/json")
+        public static HttpResponse GenerateHttpResponse(Stream stream, int httpCode = 200,
+            string contentType = "text/json")
         {
             stream.Position = 0;
             return new HttpResponse
@@ -47,8 +49,9 @@ namespace KWeb.Server
                 ResponseStream = stream
             };
         }
-        
-        public static HttpResponse GenerateHttpDirectResponse(string url, int httpCode = 301, string contentType = "text/json")
+
+        public static HttpResponse GenerateHttpDirectResponse(string url, int httpCode = 301,
+            string contentType = "text/json")
         {
             return new HttpResponse
             {
@@ -60,5 +63,62 @@ namespace KWeb.Server
                 }
             };
         }
+
+        public static Stream FileToStream(string path)
+        {
+            Stream stream = new MemoryStream(File.ReadAllBytes(path));
+            return stream;
+        }
+
+        public static HttpResponse GenerateHttpFileResponse(string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                return HttpException.GetExpResponse(404);
+            }
+
+            var contentType = MimeHelper.GetContentType(Path.GetExtension(filename));
+            return new HttpResponse
+            {
+                ResponseCode = 200,
+                Header = new Dictionary<string, string>
+                {
+                    {"Content-Type", contentType}
+                },
+                ResponseStream = FileToStream(filename)
+            };
+        }
+        
+        public static HttpResponse GenerateHttpFileResponse(string uri, string basePath)
+        {
+            // See more:
+            // https://github.com/qinyuanpei/HttpServer/blob/f5decb7b887b3afe1b9ec55b29b8a73112851bbd/HTTPServer/HTTPServer/ExampleServer.cs#L43-L87
+            uri = uri.Replace(@"/", @"\").Replace("\\..", "").TrimStart('\\');
+            string requestFile = Path.Combine(basePath, uri);
+
+            string extension = Path.GetExtension(requestFile);
+
+            HttpResponse response;
+
+            if (extension != "")
+            {
+                response = GenerateHttpFileResponse(requestFile);
+            }
+            else
+            {
+                string index  = Path.Combine(requestFile, "index.html");
+                if (Directory.Exists(requestFile) && !File.Exists(index))
+                {
+                    response = HttpException.GetExpResponse(503);
+                }
+                else
+                {
+                    response = GenerateHttpFileResponse(index);
+                }
+            }
+
+            return response;
+        }
+
     }
 }
