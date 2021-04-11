@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace KWeb.Server
@@ -88,8 +89,8 @@ namespace KWeb.Server
                 ResponseStream = FileToStream(filename)
             };
         }
-        
-        public static HttpResponse GenerateHttpFileResponse(string uri, string basePath)
+
+        public static HttpResponse GenerateHttpFileResponse(string uri, string basePath, bool isShowDic = true)
         {
             // See more:
             // https://github.com/qinyuanpei/HttpServer/blob/f5decb7b887b3afe1b9ec55b29b8a73112851bbd/HTTPServer/HTTPServer/ExampleServer.cs#L43-L87
@@ -106,10 +107,12 @@ namespace KWeb.Server
             }
             else
             {
-                string index  = Path.Combine(requestFile, "index.html");
+                string index = Path.Combine(requestFile, "index.html");
                 if (Directory.Exists(requestFile) && !File.Exists(index))
                 {
-                    response = HttpException.GetExpResponse(503);
+                    response = isShowDic
+                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html")
+                        : HttpException.GetExpResponse(503);
                 }
                 else
                 {
@@ -120,5 +123,56 @@ namespace KWeb.Server
             return response;
         }
 
+        private static string ListDirectory(string dir, string uri = null)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string link = "";
+            if (uri != null)
+            {
+                StringBuilder ssb = new StringBuilder();
+                var split = uri.Split('/');
+                foreach (var s in split[..^1])
+                {
+                    ssb.Append("/").Append(s);
+                }
+
+                link = ssb.ToString();
+            }
+
+            // Head
+            sb.Append("<a href=\"")
+                .Append(link)
+                .Append("\"><h1>")
+                .Append(uri is null ? "../" : uri)
+                .Append("/</h1></a>")
+                .Append("<hr>");
+            
+            var dic = Directory.GetDirectories(dir);
+            foreach (var p in dic)
+            {
+                var s = p.Replace("\\", "/").Substring(dir.Length);
+                sb.Append("<a href=\"")
+                    .Append(s)
+                    .Append("\">")
+                    .Append(s)
+                    .Append("</a>")
+                    .Append("\n<br>\n");
+            }
+
+            var files = Directory.GetFiles(dir);
+            foreach (var p in files)
+            {
+                var s = p.Replace("\\", "/").Substring(dir.Length);
+                sb.Append("<a hre=\"")
+                    .Append(s)
+                    .Append("\">")
+                    .Append(s)
+                    .Append("</a>")
+                    .Append("\n<br>\n");
+            }
+
+            return sb.ToString();
+        }
     }
 }

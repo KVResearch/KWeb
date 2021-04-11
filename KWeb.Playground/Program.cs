@@ -29,6 +29,7 @@ namespace KWeb.Playground
 
         private static HttpResponse Hs_OnHttpRequest(HttpRequest request)
         {
+            return HttpUtil.GenerateHttpFileResponse(request.Uri, "C:\\");
             if (request.Uri.EndsWith("ggl"))
                 return HttpUtil.GenerateHttpDirectResponse("https://google.com", 301);
             var r = _router.Route(request, true);
