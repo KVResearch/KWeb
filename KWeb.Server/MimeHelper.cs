@@ -5,6 +5,8 @@ namespace KWeb.Server
 {
     public class MimeHelper
     {
+        // See more
+        // https://referencesource.microsoft.com/#system.web/MimeMapping.cs,101
         public static string GetContentType(string extension)
         {
             if (!extension.StartsWith("."))
