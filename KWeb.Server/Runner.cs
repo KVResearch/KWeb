@@ -55,23 +55,23 @@ namespace KWeb.Server
             return this;
         }
 
-        public Runner Add(int port, HttpServer.OnHttpRequestEventHandler evt, X509Certificate cert = null)
+        public Runner Add(int port, HttpServer.OnHttpRequestEventHandler evt, bool isEnable = false)
         {
-            var hs = new HttpServer(_ip, port, cert);
+            var hs = new HttpServer(_ip, port, isEnable);
             hs.OnHttpRequest += evt;
             _dic.Add(port, hs);
             return this;
         }
 
-        public Runner Add(int port, X509Certificate cert = null)
+        public Runner Add(int port, bool isEnable = false)
         {
-            _dic.Add(port, new HttpServer(_ip, port, cert));
+            _dic.Add(port, new HttpServer(_ip, port, isEnable));
             return this;
         }
 
-        public Runner Add(int port, Func<HttpRequest, HttpResponse> evt, X509Certificate cert = null)
+        public Runner Add(int port, Func<HttpRequest, HttpResponse> evt, bool isEnable = false)
         {
-            var hs = new HttpServer(_ip, port, cert);
+            var hs = new HttpServer(_ip, port, isEnable);
             hs.OnHttpRequest += evt.Invoke;
             _dic.Add(port, hs);
             return this;

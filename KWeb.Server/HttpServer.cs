@@ -47,19 +47,19 @@ namespace KWeb.Server
 
         public event OnHttpRequestEventHandler OnHttpRequest;
 
-        public HttpServer(IPAddress ip, int port, X509Certificate cert = null)
+        public HttpServer(IPAddress ip, int port, bool isEnable = false)
         {
             _ip = ip;
             _port = port;
-            _cert = cert;
+            IsEnableSsl = isEnable;
             InitialiseInstance();
         }
 
-        public HttpServer(string ip, int port, X509Certificate cert = null)
+        public HttpServer(string ip, int port, bool isEnable = false)
         {
             _ip = IPAddress.Parse(ip);
             _port = port;
-            _cert = cert;
+            IsEnableSsl = isEnable;
             InitialiseInstance();
         }
 
@@ -107,22 +107,19 @@ namespace KWeb.Server
             }
         }
 
-        public bool IsSsl => _cert is null;
+        public bool IsEnableSsl { get; set; }
 
-        private X509Certificate _cert;
+        private CertCollection _certCollect;
 
-        public HttpServer SetSsl(string certificate)
-            => SetSsl(X509Certificate.CreateFromCertFile(certificate));
-
-        public HttpServer SetSsl(X509Certificate certifiate)
+        public HttpServer OperateCertCollection(Action<CertCollection> act)
         {
-            _cert = certifiate;
+            act.Invoke(_certCollect);
             return this;
         }
 
-        public HttpServer DisableSsl()
+        public HttpServer SetSslStatus(bool isEnable)
         {
-            _cert = null;
+            IsEnableSsl = isEnable;
             return this;
         }
 
@@ -149,7 +146,10 @@ namespace KWeb.Server
 
         private X509Certificate GetCertByHostname(string host)
         {
-            throw new NotImplementedException();
+            var cert = _certCollect.GetPossibleCert(host);
+            if (cert is null)
+                throw new ArgumentNullException($"Cannot find certification for {host}");
+            return cert;
         }
 
         private void Process(TcpClient tcp)
@@ -157,7 +157,7 @@ namespace KWeb.Server
             try
             {
                 Stream stream = tcp.GetStream();
-                if (IsSsl)
+                if (IsEnableSsl)
                     stream = ProcessSsl(stream);
                 HttpResponse response;
                 try
