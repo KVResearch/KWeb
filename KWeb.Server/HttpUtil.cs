@@ -98,27 +98,22 @@ namespace KWeb.Server
             string requestFile = Path.Combine(basePath, uri);
 
             if (File.Exists(requestFile))
-            {
                 return GenerateHttpFileResponse(requestFile);
-            }
 
-            if (Directory.Exists(requestFile))
+            if (!Directory.Exists(requestFile))
+                throw new HttpException(404);
+
+            string index = Path.Combine(requestFile, "index.html");
+            if (File.Exists(index))
             {
-                string index = Path.Combine(requestFile, "index.html");
-                if (File.Exists(index))
-                {
-                    return GenerateHttpFileResponse(index);
-                }
-                else
-                {
-                    return isShowDic
-                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
-                        : HttpException.GetExpResponse(503);
-                }
+                return GenerateHttpFileResponse(index);
             }
-
-            throw new HttpException(404);
-
+            else
+            {
+                return isShowDic
+                    ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
+                    : HttpException.GetExpResponse(503);
+            }
         }
 
         private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
@@ -163,7 +158,7 @@ namespace KWeb.Server
                     : uri + "/").Replace("\\", "/");
             if (baseUri == "/")
                 baseUri = "";
-            
+
             foreach (var p in dic)
             {
                 var s = p.Replace("\\", "/").Substring(length);
