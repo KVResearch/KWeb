@@ -94,38 +94,35 @@ namespace KWeb.Server
         {
             // See more:
             // https://github.com/qinyuanpei/HttpServer/blob/f5decb7b887b3afe1b9ec55b29b8a73112851bbd/HTTPServer/HTTPServer/ExampleServer.cs#L43-L87
-            uri = uri.Replace(@"/", @"\").Replace("\\..", "").TrimStart('\\');
+            uri = System.Web.HttpUtility.HtmlDecode(uri).Replace(@"/", @"\").Replace("\\..", "").TrimStart('\\');
             string requestFile = Path.Combine(basePath, uri);
 
-            string extension = Path.GetExtension(requestFile);
-
-            HttpResponse response;
-
-            if (extension != "")
+            if (File.Exists(requestFile))
             {
-                response = GenerateHttpFileResponse(requestFile);
+                return GenerateHttpFileResponse(requestFile);
             }
-            else
+
+            if (Directory.Exists(requestFile))
             {
                 string index = Path.Combine(requestFile, "index.html");
-                if (Directory.Exists(requestFile) && !File.Exists(index))
+                if (File.Exists(index))
                 {
-                    response = isShowDic
-                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
-                        : HttpException.GetExpResponse(503);
+                    return GenerateHttpFileResponse(index);
                 }
                 else
                 {
-                    response = GenerateHttpFileResponse(index);
+                    return isShowDic
+                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
+                        : HttpException.GetExpResponse(503);
                 }
             }
 
-            return response;
+            throw new HttpException(404);
+
         }
 
         private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
         {
-            
             StringBuilder sb = new StringBuilder();
 
             string link = "";
@@ -134,7 +131,6 @@ namespace KWeb.Server
                 uri = System.Web.HttpUtility.HtmlDecode(uri);
                 StringBuilder ssb = new StringBuilder();
                 var split = uri.Split('/');
-                Console.WriteLine(split.Length);
 
                 if (split.Length == 1)
                     link = "/";
@@ -155,10 +151,24 @@ namespace KWeb.Server
                 .Append("\"><h1>../</h1></a><hr>");
 
             var dic = Directory.GetDirectories(dir);
+
+            int length = dir.Length;
+            if (!dir.EndsWith("\\") && !dir.EndsWith("/"))
+                ++length;
+
+            var baseUri = (uri is null
+                ? "/"
+                : uri.EndsWith("/")
+                    ? uri
+                    : uri + "/").Replace("\\", "/");
+            if (baseUri == "/")
+                baseUri = "";
+            
             foreach (var p in dic)
             {
-                var s = p.Replace("\\", "/").Substring(dir.Length);
-                sb.Append("<a href=\"./")
+                var s = p.Replace("\\", "/").Substring(length);
+                sb.Append("<a href=\"/")
+                    .Append(baseUri)
                     .Append(s)
                     .Append("\">")
                     .Append(s)
@@ -169,8 +179,9 @@ namespace KWeb.Server
             var files = Directory.GetFiles(dir);
             foreach (var p in files)
             {
-                var s = p.Replace("\\", "/").Substring(dir.Length);
-                sb.Append("<a href=\"./")
+                var s = p.Replace("\\", "/").Substring(length);
+                sb.Append("<a href=\"/")
+                    .Append(baseUri)
                     .Append(s)
                     .Append("\">")
                     .Append(s)
