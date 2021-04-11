@@ -111,7 +111,7 @@ namespace KWeb.Server
                 if (Directory.Exists(requestFile) && !File.Exists(index))
                 {
                     response = isShowDic
-                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html")
+                        ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
                         : HttpException.GetExpResponse(503);
                 }
                 else
