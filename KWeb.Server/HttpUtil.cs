@@ -125,34 +125,40 @@ namespace KWeb.Server
 
         private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
         {
+            
             StringBuilder sb = new StringBuilder();
 
             string link = "";
             if (uri != null)
             {
+                uri = System.Web.HttpUtility.HtmlDecode(uri);
                 StringBuilder ssb = new StringBuilder();
                 var split = uri.Split('/');
-                foreach (var s in split[..^1])
-                {
-                    ssb.Append("/").Append(s);
-                }
+                Console.WriteLine(split.Length);
 
-                link = ssb.ToString();
+                if (split.Length == 1)
+                    link = "/";
+                else
+                {
+                    foreach (var s in split[..^1])
+                    {
+                        ssb.Append("/").Append(s);
+                    }
+
+                    link = ssb.ToString();
+                }
             }
 
             // Head
             sb.Append("<a href=\"")
                 .Append(link)
-                .Append("\"><h1>")
-                .Append(uri is null ? "../" : uri)
-                .Append("/</h1></a>")
-                .Append("<hr>");
+                .Append("\"><h1>../</h1></a><hr>");
 
             var dic = Directory.GetDirectories(dir);
             foreach (var p in dic)
             {
                 var s = p.Replace("\\", "/").Substring(dir.Length);
-                sb.Append("<a href=\"")
+                sb.Append("<a href=\"./")
                     .Append(s)
                     .Append("\">")
                     .Append(s)
@@ -164,7 +170,7 @@ namespace KWeb.Server
             foreach (var p in files)
             {
                 var s = p.Replace("\\", "/").Substring(dir.Length);
-                sb.Append("<a href=\"")
+                sb.Append("<a href=\"./")
                     .Append(s)
                     .Append("\">")
                     .Append(s)
