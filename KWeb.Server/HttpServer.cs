@@ -19,6 +19,12 @@ namespace KWeb.Server
         private int _port;
         private Thread m_ListenerThread;
         private TcpListener m_Listener;
+        private CertCollection _certCollect;
+
+        public bool IsEnableSsl { get; set; }
+
+
+        #region IP & Port
 
         public HttpServer SetIp(IPAddress ip, bool reinitialise = true)
         {
@@ -43,9 +49,13 @@ namespace KWeb.Server
             return this;
         }
 
+        #endregion
+
         public delegate HttpResponse OnHttpRequestEventHandler(HttpRequest request);
 
         public event OnHttpRequestEventHandler OnHttpRequest;
+
+        #region Constructor
 
         public HttpServer(IPAddress ip, int port, bool isEnable = false)
         {
@@ -63,12 +73,16 @@ namespace KWeb.Server
             InitialiseInstance();
         }
 
+        #endregion
+
         private void InitialiseInstance()
         {
             m_Listener = new TcpListener(_ip, _port);
         }
 
         public bool IsRunning => m_ListenerThread is null ? false : m_ListenerThread.IsAlive;
+
+        #region Operation
 
         public void Start()
         {
@@ -97,6 +111,8 @@ namespace KWeb.Server
             m_Listener.Stop();
         }
 
+        #endregion
+
         private void MainProcess()
         {
             m_Listener.Start();
@@ -106,10 +122,6 @@ namespace KWeb.Server
                 Task.Run(() => Process(tcp));
             }
         }
-
-        public bool IsEnableSsl { get; set; }
-
-        private CertCollection _certCollect;
 
         public HttpServer OperateCertCollection(Action<CertCollection> act)
         {
@@ -123,8 +135,9 @@ namespace KWeb.Server
             return this;
         }
 
+        #region SSL
 
-        private Stream ProcessSsl(Stream clientStream)
+        private Stream ProcessSsl(Stream clientStream, int readTimeout = 10000, int writeTimeout = 10000)
         {
             string host = null;
             // No need to catch exp, will catch in method Process
@@ -139,8 +152,8 @@ namespace KWeb.Server
             sslStream.AuthenticateAsServer(GetCertByHostname(host),
                 false,
                 SslProtocols.Tls13 | SslProtocols.Tls12, true);
-            sslStream.ReadTimeout = 10000;
-            sslStream.WriteTimeout = 10000;
+            sslStream.ReadTimeout = readTimeout;
+            sslStream.WriteTimeout = writeTimeout;
             return sslStream;
         }
 
@@ -151,6 +164,8 @@ namespace KWeb.Server
                 throw new ArgumentNullException($"Cannot find certification for {host}");
             return cert;
         }
+
+        #endregion
 
         private void Process(TcpClient tcp)
         {
