@@ -20,9 +20,37 @@ namespace KWeb.Server
         private Thread m_ListenerThread;
         private TcpListener m_Listener;
         private CertCollection _certCollect;
+        private bool _enableSsl;
 
-        public bool IsEnableSsl { get; set; }
+        public bool IsEnableSsl
+        {
+            get => _enableSsl;
+            set
+            {
+                _enableSsl = value;
+                if (_enableSsl && _certCollect == null)
+                    _certCollect = new CertCollection();
+            }
+        }
 
+        public HttpServer SetSslStatus(bool isEnable)
+        {
+            IsEnableSsl = isEnable;
+            return this;
+        }
+
+        public bool IsRunning => m_ListenerThread is null ? false : m_ListenerThread.IsAlive;
+
+        public delegate HttpResponse OnHttpRequestEventHandler(HttpRequest request);
+
+        public event OnHttpRequestEventHandler OnHttpRequest;
+
+
+        public HttpServer OperateCertCollection(Action<CertCollection> act)
+        {
+            act.Invoke(_certCollect);
+            return this;
+        }
 
         #region IP & Port
 
@@ -51,10 +79,6 @@ namespace KWeb.Server
 
         #endregion
 
-        public delegate HttpResponse OnHttpRequestEventHandler(HttpRequest request);
-
-        public event OnHttpRequestEventHandler OnHttpRequest;
-
         #region Constructor
 
         public HttpServer(IPAddress ip, int port, bool isEnable = false)
@@ -79,8 +103,6 @@ namespace KWeb.Server
         {
             m_Listener = new TcpListener(_ip, _port);
         }
-
-        public bool IsRunning => m_ListenerThread is null ? false : m_ListenerThread.IsAlive;
 
         #region Operation
 
@@ -121,18 +143,6 @@ namespace KWeb.Server
                 var tcp = m_Listener.AcceptTcpClient();
                 Task.Run(() => Process(tcp));
             }
-        }
-
-        public HttpServer OperateCertCollection(Action<CertCollection> act)
-        {
-            act.Invoke(_certCollect);
-            return this;
-        }
-
-        public HttpServer SetSslStatus(bool isEnable)
-        {
-            IsEnableSsl = isEnable;
-            return this;
         }
 
         #region SSL
