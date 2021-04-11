@@ -123,7 +123,7 @@ namespace KWeb.Server
             return response;
         }
 
-        private static string ListDirectory(string dir, string uri = null)
+        private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -147,7 +147,7 @@ namespace KWeb.Server
                 .Append(uri is null ? "../" : uri)
                 .Append("/</h1></a>")
                 .Append("<hr>");
-            
+
             var dic = Directory.GetDirectories(dir);
             foreach (var p in dic)
             {
@@ -171,6 +171,12 @@ namespace KWeb.Server
                     .Append("</a>")
                     .Append("\n<br>\n");
             }
+
+            if (isShowCopyright)
+                sb.Append("<hr>by ")
+                    .Append(Info.ServerName)
+                    .Append(" ")
+                    .Append(Info.Version);
 
             return sb.ToString();
         }
