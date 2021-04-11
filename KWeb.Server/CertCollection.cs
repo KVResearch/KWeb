@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace KWeb.Server
@@ -23,7 +25,35 @@ namespace KWeb.Server
         }
 
         public CertCollection AddOrUpdate(X509Certificate cert)
-            => AddOrUpdate(GetCnFromSubject(cert.Subject), cert);
+        {
+            X509Certificate2 x2 = new X509Certificate2(cert);
+            var san = GetSubjectAlternativeNames(x2);
+            if (san == null || san.Count == 0)
+                throw new ArgumentNullException("Cannot find any records");
+            foreach (var hostname in san)
+            {
+                AddOrUpdate(GetCnFromSubject(hostname.Trim()), x2);
+            }
+
+            return this;
+        }
+
+        public static List<string> GetSubjectAlternativeNames(X509Certificate2 cert)
+        {
+            foreach (X509Extension extension in cert.Extensions)
+            {
+                AsnEncodedData asndata = new AsnEncodedData(extension.Oid, extension.RawData);
+                if (string.Equals(extension.Oid.FriendlyName, "Subject Alternative Name"))
+                {
+                    return new List<string>(
+                        // FIXME: \r\n?
+                        asndata.Format(true).Split(new [] {"\r\n", "DNS Name="},
+                            StringSplitOptions.RemoveEmptyEntries));
+                }
+            }
+
+            return null;
+        }
 
         public CertCollection Remove(string hostname)
         {
@@ -33,7 +63,7 @@ namespace KWeb.Server
 
         public X509Certificate this[string hostname]
             => _dic[hostname];
-        
+
         private string GetCnFromSubject(string subject)
         {
             if (subject == null)
@@ -55,5 +85,37 @@ namespace KWeb.Server
 
         public IEnumerator GetEnumerator()
             => _dic.GetEnumerator();
+
+        public static string[] ParseToValidCN(string hostname)
+        {
+            List<string> s = new List<string>();
+            if (hostname.StartsWith("."))
+                hostname = hostname.Substring(1);
+            s.Add(hostname);
+            s.Add("*." + hostname);
+
+            var index = hostname.IndexOf('.');
+            if (index > 0)
+                s.Add("*" + hostname.Substring(index));
+            return s.ToArray();
+        }
+
+        public X509Certificate GetPossibleCert(string host)
+        {
+            host = host.Trim();
+            if (string.IsNullOrEmpty(host))
+                return null;
+
+            var s = ParseToValidCN(host);
+            if (s.Length <= 0)
+                return null;
+            foreach (var i in s)
+            {
+                if (_dic[i] != null)
+                    return _dic[i];
+            }
+
+            return null;
+        }
     }
 }
