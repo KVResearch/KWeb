@@ -3,8 +3,7 @@
   <PropertyGroup>
     <RootNamespace>KWeb.Server</RootNamespace>
     <AssemblyName>KWeb.Server</AssemblyName>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
 </Project>
