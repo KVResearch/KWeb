@@ -164,7 +164,7 @@ namespace KWeb.Server
             foreach (var p in files)
             {
                 var s = p.Replace("\\", "/").Substring(dir.Length);
-                sb.Append("<a hre=\"")
+                sb.Append("<a href=\"")
                     .Append(s)
                     .Append("\">")
                     .Append(s)
