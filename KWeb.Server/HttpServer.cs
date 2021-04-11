@@ -130,7 +130,7 @@ namespace KWeb.Server
         private Stream ProcessSsl(Stream clientStream)
         {
             // No need to catch exp, will catch in method Process
-            SslStream sslStream = new SslStream(clientStream);
+            SslStream sslStream = new SslStream(clientStream, false);
             sslStream.AuthenticateAsServer(_cert,
                 false,
                 SslProtocols.Tls13 | SslProtocols.Tls12, true);
