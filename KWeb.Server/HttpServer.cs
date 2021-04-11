@@ -9,12 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 
 // ReSharper disable MemberCanBePrivate.Global
-
 // ReSharper disable FunctionNeverReturns
+// ReSharper disable once UnusedMember.Global
 
 namespace KWeb.Server
 {
-    // ReSharper disable once UnusedMember.Global
     public class HttpServer
     {
         private IPAddress _ip;
