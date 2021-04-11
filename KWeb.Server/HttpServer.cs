@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 // ReSharper disable FunctionNeverReturns
@@ -92,13 +93,9 @@ namespace KWeb.Server
             InitialiseInstance();
         }
 
-        public HttpServer(string ip, int port, bool isEnableSsl = false, bool isDevelopment = false)
+        public HttpServer(string ip, int port, bool isEnableSsl = false, bool isDevelopment = false) :
+            this(IPAddress.Parse(ip), port, isEnableSsl, isDevelopment)
         {
-            _ip = IPAddress.Parse(ip);
-            _port = port;
-            IsEnableSsl = isEnableSsl;
-            IsDevelopment = isDevelopment;
-            InitialiseInstance();
         }
 
         #endregion
