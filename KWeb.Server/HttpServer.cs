@@ -129,7 +129,7 @@ namespace KWeb.Server
             string host = null;
             // No need to catch exp, will catch in method Process
             SslStream sslStream = new SslStream(clientStream, false, null,
-                (a, targetHost, c, d, e) =>
+                (obj, targetHost, certCollect, cert, acptIssuer) =>
                 {
                     // Not getting here :(
                     host = targetHost;
