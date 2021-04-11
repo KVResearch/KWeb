@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-
 using KWeb.Router;
 using KWeb.Server;
 
@@ -14,7 +13,7 @@ namespace KWeb.Playground
 
         static void Main(string[] args)
         {
-            HttpServer hs = new HttpServer("127.0.0.1", 80);
+            HttpServer hs = new HttpServer("127.0.0.1", 80, false, true);
             hs.OnHttpRequest += Hs_OnHttpRequest;
             _router = new Router.Router();
             _router.AddOrUpdateRoute("default", new BasicRoutedEndPoint())
@@ -50,7 +49,7 @@ namespace KWeb.Playground
                 "<p>Method => " + request.Method + "</p>\n" +
                 "<p>Host   => " + request.Host + "</p>\n" +
                 "<p>Uri    => " + request.Uri + "</p>\n" +
-                "<p>IP     => " + ((IPEndPoint)request.RemoteAddress).Address + "</p>\n" +
+                "<p>IP     => " + ((IPEndPoint) request.RemoteAddress).Address + "</p>\n" +
                 "<p>Data   => " + request.ReadToEnd() + "</p>"
                 , 200, "text/html");
         }

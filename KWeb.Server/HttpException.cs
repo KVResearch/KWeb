@@ -20,6 +20,9 @@ namespace KWeb.Server
                 $@"<center><h1>{ResponseCode} {ResponseCodes.Codes[ResponseCode]}</h1><hr>{Info.ServerName} {Info.Version}</center><br>{Message}";
         }
 
+        public HttpResponse ToHttpResponse()
+            => GetExpResponse(ResponseCode, Message);
+
 
         public static HttpResponse GetExpResponse(int code, string msg = null)
         {

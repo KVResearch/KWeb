@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+// ReSharper disable MemberCanBePrivate.Global
 
 // ReSharper disable FunctionNeverReturns
 
@@ -33,6 +34,8 @@ namespace KWeb.Server
             }
         }
 
+        public bool IsDevelopment { get; set; }
+
         public HttpServer SetSslStatus(bool isEnable)
         {
             IsEnableSsl = isEnable;
@@ -44,7 +47,6 @@ namespace KWeb.Server
         public delegate HttpResponse OnHttpRequestEventHandler(HttpRequest request);
 
         public event OnHttpRequestEventHandler OnHttpRequest;
-
 
         public HttpServer OperateCertCollection(Action<CertCollection> act)
         {
@@ -81,19 +83,21 @@ namespace KWeb.Server
 
         #region Constructor
 
-        public HttpServer(IPAddress ip, int port, bool isEnable = false)
+        public HttpServer(IPAddress ip, int port, bool isEnableSsl = false, bool isDevelopment = false)
         {
             _ip = ip;
             _port = port;
-            IsEnableSsl = isEnable;
+            IsEnableSsl = isEnableSsl;
+            IsDevelopment = isDevelopment;
             InitialiseInstance();
         }
 
-        public HttpServer(string ip, int port, bool isEnable = false)
+        public HttpServer(string ip, int port, bool isEnableSsl = false, bool isDevelopment = false)
         {
             _ip = IPAddress.Parse(ip);
             _port = port;
-            IsEnableSsl = isEnable;
+            IsEnableSsl = isEnableSsl;
+            IsDevelopment = isDevelopment;
             InitialiseInstance();
         }
 
@@ -152,7 +156,7 @@ namespace KWeb.Server
             string host = null;
             // No need to catch exp, will catch in method Process
             SslStream sslStream = new SslStream(clientStream, false, null,
-                (obj, targetHost, certCollect, cert, acptIssuer) =>
+                (obj, targetHost, certCollect, cert, acceptIssuer) =>
                 {
                     // Not getting here :(
                     host = targetHost;
@@ -197,11 +201,13 @@ namespace KWeb.Server
                 }
                 catch (HttpException e)
                 {
-                    response = HttpException.GetExpResponse(e.ResponseCode);
+                    response = e.ToHttpResponse();
                 }
                 catch (Exception e)
                 {
-                    response = HttpUtil.GenerateHttpResponse(e.ToString(), 500, "text/plain");
+                    response = IsDevelopment
+                        ? HttpUtil.GenerateHttpResponse(e.ToString(), 500, "text/plain")
+                        : HttpException.GetExpResponse(500);
                 }
 
                 try
