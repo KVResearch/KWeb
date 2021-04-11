@@ -110,33 +110,39 @@ namespace KWeb.Server
                 return GenerateHttpFileResponse(index);
 
             return isShowDic
-                ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
+                ? GenerateHttpResponse(GetDirectoryListHtml(requestFile, uri), 200, "text/html;charset=utf-8")
                 : HttpException.GetExpResponse(503);
         }
 
-        private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
+        private static string GetLastLevelUri(string uri, bool isLastSlashRequired = false)
+        {
+            uri = System.Web.HttpUtility.HtmlDecode(uri);
+            StringBuilder sb = new StringBuilder();
+            var split = uri.Split('/');
+
+            if (split.Length == 1)
+                return isLastSlashRequired
+                    ? ""
+                    : "/";
+
+            foreach (var s in split[..^1])
+            {
+                sb.Append("/").Append(s);
+            }
+
+            if (isLastSlashRequired)
+                sb.Append("/");
+
+            return sb.ToString();
+        }
+
+        private static string GetDirectoryListHtml(string dir, string uri = null, bool isShowCopyright = true)
         {
             StringBuilder sb = new StringBuilder();
 
             string link = "";
             if (uri != null)
-            {
-                uri = System.Web.HttpUtility.HtmlDecode(uri);
-                StringBuilder ssb = new StringBuilder();
-                var split = uri.Split('/');
-
-                if (split.Length == 1)
-                    link = "/";
-                else
-                {
-                    foreach (var s in split[..^1])
-                    {
-                        ssb.Append("/").Append(s);
-                    }
-
-                    link = ssb.ToString();
-                }
-            }
+                link = GetLastLevelUri(uri, true);
 
             // Head
             sb.Append("<a href=\"")
@@ -149,14 +155,16 @@ namespace KWeb.Server
             if (!dir.EndsWith("\\") && !dir.EndsWith("/"))
                 ++length;
 
-            var baseUri = (uri is null
-                ? "/"
+            // TODO: Before, replace is under baseUri, so why?
+            uri = uri?.Replace("\\", "/");
+
+            var baseUri = uri is null or "/" or ""
+                ? ""
                 : uri.EndsWith("/")
                     ? uri
-                    : uri + "/").Replace("\\", "/");
-            if (baseUri == "/")
-                baseUri = "";
+                    : uri + "/";
 
+            Console.WriteLine(baseUri);
             foreach (var p in dic)
             {
                 var s = p.Replace("\\", "/").Substring(length);

@@ -6,7 +6,7 @@ namespace KWeb.Server
     {
         public int ResponseCode { get; }
 
-        public string Message { get; }
+        public override string Message { get; }
 
         public HttpException(int code, string message = null)
         {

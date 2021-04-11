@@ -4,6 +4,7 @@
     <RootNamespace>KWeb.Server</RootNamespace>
     <AssemblyName>KWeb.Server</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
 </Project>
