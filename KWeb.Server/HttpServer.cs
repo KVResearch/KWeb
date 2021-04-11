@@ -129,14 +129,27 @@ namespace KWeb.Server
 
         private Stream ProcessSsl(Stream clientStream)
         {
+            string host = null;
             // No need to catch exp, will catch in method Process
-            SslStream sslStream = new SslStream(clientStream, false);
-            sslStream.AuthenticateAsServer(_cert,
+            SslStream sslStream = new SslStream(clientStream, false, null,
+                (a, targetHost, c, d, e) =>
+                {
+                    // Not getting here :(
+                    host = targetHost;
+                    return null;
+                });
+
+            sslStream.AuthenticateAsServer(GetCertByHostname(host),
                 false,
                 SslProtocols.Tls13 | SslProtocols.Tls12, true);
             sslStream.ReadTimeout = 10000;
             sslStream.WriteTimeout = 10000;
             return sslStream;
+        }
+
+        private X509Certificate GetCertByHostname(string host)
+        {
+            throw new NotImplementedException();
         }
 
         private void Process(TcpClient tcp)
