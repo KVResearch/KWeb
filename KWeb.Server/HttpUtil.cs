@@ -90,12 +90,13 @@ namespace KWeb.Server
             };
         }
 
-        public static HttpResponse GenerateHttpFileResponse(string uri, string basePath, bool isShowDic = true)
+        public static HttpResponse GenerateHttpFileResponse(string uri, string root,
+            string indexFileName = "index.html", bool isShowDic = true)
         {
             // See more:
             // https://github.com/qinyuanpei/HttpServer/blob/f5decb7b887b3afe1b9ec55b29b8a73112851bbd/HTTPServer/HTTPServer/ExampleServer.cs#L43-L87
             uri = System.Web.HttpUtility.HtmlDecode(uri).Replace(@"/", @"\").Replace("\\..", "").TrimStart('\\');
-            string requestFile = Path.Combine(basePath, uri);
+            string requestFile = Path.Combine(root, uri);
 
             if (File.Exists(requestFile))
                 return GenerateHttpFileResponse(requestFile);
@@ -103,17 +104,14 @@ namespace KWeb.Server
             if (!Directory.Exists(requestFile))
                 throw new HttpException(404);
 
-            string index = Path.Combine(requestFile, "index.html");
+            string index = Path.Combine(requestFile, indexFileName);
+
             if (File.Exists(index))
-            {
                 return GenerateHttpFileResponse(index);
-            }
-            else
-            {
-                return isShowDic
-                    ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
-                    : HttpException.GetExpResponse(503);
-            }
+
+            return isShowDic
+                ? GenerateHttpResponse(ListDirectory(requestFile, uri), 200, "text/html;charset=utf-8")
+                : HttpException.GetExpResponse(503);
         }
 
         private static string ListDirectory(string dir, string uri = null, bool isShowCopyright = true)
