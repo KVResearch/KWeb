@@ -11,10 +11,9 @@ namespace KWeb.Server
         {
             if (!extension.StartsWith("."))
                 extension = "." + extension;
-            var type = _dic[extension];
-            if (type is null)
-                type = "application/octet-stream";
-            return type;
+            if (_dic.ContainsKey(extension))
+                return _dic[extension];
+            return "application/octet-stream";
         }
 
         private static readonly ConcurrentDictionary<string, string> _dic = new ConcurrentDictionary<string, string>(
