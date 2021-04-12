@@ -115,7 +115,8 @@ namespace KWeb.Server
 
         private static string GetLastLevelUri(string uri, bool isLastSlashRequired = false)
         {
-            uri = System.Web.HttpUtility.HtmlDecode(uri);
+            uri = System.Web.HttpUtility.HtmlDecode(uri.Trim());
+            uri = uri.Trim('/');
             StringBuilder sb = new StringBuilder();
             var split = uri.Split('/');
 
@@ -145,7 +146,7 @@ namespace KWeb.Server
 
             // Head
             sb.Append("<a href=\"")
-                .Append(link)
+                .Append(link == "" ? "/" : link)
                 .Append("\"><h1>../</h1></a><hr>");
 
             var dic = Directory.GetDirectories(dir);
@@ -163,7 +164,6 @@ namespace KWeb.Server
                     ? uri
                     : uri + "/";
 
-            Console.WriteLine(baseUri);
             foreach (var p in dic)
             {
                 var s = p.Replace("\\", "/").Substring(length);
@@ -192,7 +192,7 @@ namespace KWeb.Server
             if (isShowCopyright)
                 sb.Append("<hr>by ")
                     .Append(Info.ServerName)
-                    .Append(" ")
+                    .Append(' ')
                     .Append(Info.Version);
 
             return sb.ToString();
