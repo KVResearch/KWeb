@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace KWeb.Server
+namespace KWeb.Server.Entities
 {
     public class HttpResponse : IDisposable
     {

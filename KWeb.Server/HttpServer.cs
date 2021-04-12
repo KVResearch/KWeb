@@ -7,6 +7,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using KWeb.Server.Entities;
+using KWeb.Server.Helpers;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable FunctionNeverReturns

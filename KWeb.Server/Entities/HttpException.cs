@@ -1,6 +1,6 @@
 using System;
 
-namespace KWeb.Server
+namespace KWeb.Server.Entities
 {
     public class HttpException : Exception
     {
@@ -26,7 +26,7 @@ namespace KWeb.Server
 
         public static HttpResponse GetExpResponse(int code, string msg = null)
         {
-            return HttpUtil.GenerateHttpResponse(
+            return KWeb.Server.HttpUtil.GenerateHttpResponse(
                 $@"<center><h1>{code} {ResponseCodes.Codes[code]}</h1><hr>{Info.ServerName} {Info.Version}</center><br>{msg}",
                 code, "text/html");
         }

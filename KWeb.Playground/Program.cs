@@ -2,6 +2,7 @@
 using System.Net;
 using KWeb.Router;
 using KWeb.Server;
+using KWeb.Server.Entities;
 
 // ReSharper disable once FunctionNeverReturns
 

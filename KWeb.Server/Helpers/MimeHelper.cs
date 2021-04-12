@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace KWeb.Server
+namespace KWeb.Server.Helpers
 {
     public class MimeHelper
     {

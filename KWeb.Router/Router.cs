@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using KWeb.Server;
+using KWeb.Server.Entities;
 
 namespace KWeb.Router
 {

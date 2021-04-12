@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace KWeb.Server
+namespace KWeb.Server.Entities
 {
     public class CertCollection : IEnumerable
     {

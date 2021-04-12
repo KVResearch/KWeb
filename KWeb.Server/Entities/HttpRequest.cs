@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
-namespace KWeb.Server
+namespace KWeb.Server.Entities
 {
     public class HttpRequest : IDisposable
     {

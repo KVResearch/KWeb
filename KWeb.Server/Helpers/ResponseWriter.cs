@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using KWeb.Server.Entities;
 
-namespace KWeb.Server
+namespace KWeb.Server.Helpers
 {
     internal static class ResponseWriter
     {

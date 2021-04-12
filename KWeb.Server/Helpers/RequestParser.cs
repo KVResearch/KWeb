@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using KWeb.Server.Entities;
 
-namespace KWeb.Server
+namespace KWeb.Server.Helpers
 {
     internal static class RequestParser
     {
@@ -29,7 +30,7 @@ namespace KWeb.Server
 
             return request;
         }
-        
+
         private enum ParsingState
         {
             Method,
@@ -39,14 +40,14 @@ namespace KWeb.Server
         }
 
         private static string Parse(Stream stream, ParsingState st)
-        => st switch
-        {
-            ParsingState.Method => ParseMethod(stream),
-            ParsingState.Uri => ParseUri(stream),
-            ParsingState.HeaderKey => ParseHeaderKey(stream),
-            ParsingState.HeaderValue => ParseHeaderValue(stream),
-            _ => throw new ApplicationException(),
-        };
+            => st switch
+            {
+                ParsingState.Method => ParseMethod(stream),
+                ParsingState.Uri => ParseUri(stream),
+                ParsingState.HeaderKey => ParseHeaderKey(stream),
+                ParsingState.HeaderValue => ParseHeaderValue(stream),
+                _ => throw new ApplicationException(),
+            };
 
         private static string ParseHeaderValue(Stream stream)
         {
@@ -68,7 +69,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char)ch);
+                sb.Append((char) ch);
             }
 
             return sb.ToString();
@@ -95,7 +96,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char)ch);
+                sb.Append((char) ch);
             }
 
             return sb.ToString();
@@ -118,7 +119,7 @@ namespace KWeb.Server
                     break;
                 }
 
-                sb.Append((char)ch);
+                sb.Append((char) ch);
             }
 
             if (sb.ToString(sb.Length - 8, 8) != "HTTP/1.1")
@@ -137,7 +138,7 @@ namespace KWeb.Server
                     throw new HttpException(400);
                 if (ch == ' ')
                     break;
-                sb.Append((char)ch);
+                sb.Append((char) ch);
             }
 
             switch (sb.ToString())
