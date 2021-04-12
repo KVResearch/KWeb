@@ -136,7 +136,8 @@ namespace KWeb.Server
             return sb.ToString();
         }
 
-        private static string GetDirectoryListHtml(string dir, string uri = null, bool isShowCopyright = true)
+        private static string GetDirectoryListHtml(string dir, string uri = null, bool isShowCopyright = true,
+            string title = "File Watcher")
         {
             StringBuilder sb = new StringBuilder();
 
@@ -145,9 +146,12 @@ namespace KWeb.Server
                 link = GetLastLevelUri(uri, true);
 
             // Head
-            sb.Append("<a href=\"")
+            sb.Append("<h1>")
+                .Append(title)
+                .Append("</h1><hr>")
+                .Append("<a href=\"")
                 .Append(link == "" ? "/" : link)
-                .Append("\"><h1>../</h1></a><hr>");
+                .Append("\">../</a>");
 
             var dic = Directory.GetDirectories(dir);
 
