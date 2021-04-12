@@ -129,11 +129,11 @@ namespace KWeb.Server
 
             foreach (var s in split[..^1])
             {
-                sb.Append("/").Append(s);
+                sb.Append('/').Append(s);
             }
 
             if (isLastSlashRequired)
-                sb.Append("/");
+                sb.Append('/');
 
             return sb.ToString();
         }
