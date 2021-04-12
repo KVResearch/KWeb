@@ -200,7 +200,9 @@ namespace KWeb.Server
                 sb.Append(@"<p>Empty</p>");
 
             if (isShowCopyright)
-                sb.Append("<hr>by ")
+                sb.Append("<hr>Count: ")
+                    .Append(fileCount)
+                    .Append(" by ")
                     .Append(Info.ServerName)
                     .Append(' ')
                     .Append(Info.Version);
