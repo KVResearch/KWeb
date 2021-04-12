@@ -151,7 +151,7 @@ namespace KWeb.Server
                 .Append("</h1><hr>")
                 .Append("<a href=\"")
                 .Append(link == "" ? "/" : link)
-                .Append("\">../</a>");
+                .Append("\">../</a><br>");
 
             var dic = Directory.GetDirectories(dir);
 
@@ -168,8 +168,10 @@ namespace KWeb.Server
                     ? uri
                     : uri + "/";
 
+            int fileCount = 0;
             foreach (var p in dic)
             {
+                ++fileCount;
                 var s = p.Replace("\\", "/").Substring(length);
                 sb.Append("<a href=\"/")
                     .Append(baseUri)
@@ -183,6 +185,7 @@ namespace KWeb.Server
             var files = Directory.GetFiles(dir);
             foreach (var p in files)
             {
+                ++fileCount;
                 var s = p.Replace("\\", "/").Substring(length);
                 sb.Append("<a href=\"/")
                     .Append(baseUri)
@@ -192,6 +195,9 @@ namespace KWeb.Server
                     .Append("</a>")
                     .Append("\n<br>\n");
             }
+
+            if (fileCount == 0)
+                sb.Append(@"<p>Empty</p>");
 
             if (isShowCopyright)
                 sb.Append("<hr>by ")
